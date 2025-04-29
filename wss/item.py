@@ -5,8 +5,7 @@ class Item: #modify player stats
 
 
 class FoodBonus(Item):
-    def __init__(self, amount=5, is_repeating=False):
-        super().__init__(is_repeating)
+    def __init__(self, amount=5):
         self.amount = amount #how much food the player gets
 
     def apply_to(self, player): #increases amount wtout going over max
@@ -14,8 +13,7 @@ class FoodBonus(Item):
 
 
 class WaterBonus(Item):
-    def __init__(self, amount=5, is_repeating=False):
-        super().__init__(is_repeating)
+    def __init__(self, amount=5):
         self.amount = amount
 
     def apply_to(self, player):
@@ -24,7 +22,6 @@ class WaterBonus(Item):
 
 class GoldBonus(Item):
     def __init__(self, amount=3):
-        super().__init__(is_repeating=False)
         self.amount = amount
 
     def apply_to(self, player):
