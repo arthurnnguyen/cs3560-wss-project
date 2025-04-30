@@ -1,28 +1,13 @@
-# main.py
+# Launches the game
 
-from wss.player import Player
-from wss.item import FoodBonus, WaterBonus, GoldBonus
-from wss.trader import Trader
+import os, sys
+
+# Add the directory containing this file (project root) to sys.path
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+from wss.game import main as run_game
 
 if __name__ == "__main__":
-    # dummy player
-    player = Player(
-        max_strength=10,
-        max_water=10,
-        max_food=10,
-        vision=None,
-        brain=None,
-        location=(0, 0)
-    )
-
-    from wss.trader import Trader
-
-trader = Trader()
-
-trader.initiate_trade(player)
-
-#stats after trade
-print("\nAfter interaction:")
-print(f"Food: {player.current_food}")
-print(f"Water: {player.current_water}")
-print(f"Gold: {player.current_gold}")
+    run_game()

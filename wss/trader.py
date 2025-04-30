@@ -1,4 +1,4 @@
-# trader.py
+# trader interaction logic
 
 from wss.item import Item
 

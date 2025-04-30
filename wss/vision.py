@@ -1,0 +1,1 @@
+# player sight and scanning surrounding squares
