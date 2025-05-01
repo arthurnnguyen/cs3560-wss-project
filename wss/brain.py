@@ -1,3 +1,4 @@
+# player decison making strategy
 # brain.py
 from wss.path import Path
 

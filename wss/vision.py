@@ -1,3 +1,4 @@
+# player sight and scanning surrounding squares
 # vision.py
 from wss.path import Path
 
