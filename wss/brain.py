@@ -1,5 +1,6 @@
 # player decison making strategy
 # brain.py
+
 from wss.path import Path
 
 class Brain:
@@ -14,12 +15,14 @@ class SurvivalBrain(Brain):
         if player.current_water <= 2:
             print("Critical need: Water")
             path = player.vision.closest_water(game_map, player)
+            self._print_path_info("Water", path)
             if path and self.is_path_affordable(path, player):
                 return path.directions[0]
 
         if player.current_food <= 2:
             print("Critical need: Food")
             path = player.vision.closest_food(game_map, player)
+            self._print_path_info("Food", path)
             if path and self.is_path_affordable(path, player):
                 return path.directions[0]
 
@@ -30,6 +33,7 @@ class SurvivalBrain(Brain):
 
         # Step 3: Evaluate progress toward east (easiest path)
         path = player.vision.easiest_path(game_map, player)
+        self._print_path_info("Easiest Path", path)
         if path and self.is_path_affordable(path, player):
             print("Path to east selected.")
             return path.directions[0]
@@ -39,13 +43,19 @@ class SurvivalBrain(Brain):
         return "rest"
 
     def is_path_affordable(self, path, player):
-        """Ensure player has enough resources to take the path"""
         cost = path.total_cost()
+        print(f"Evaluating affordability — Cost: {cost}, Player Stats: "
+              f"Strength={player.current_strength}, Food={player.current_food}, Water={player.current_water}")
         return (
             player.current_food >= cost['food']
             and player.current_water >= cost['water']
             and player.current_strength >= cost['movement']
         )
-    
 
+    def _print_path_info(self, label, path):
+        if path:
+            print(f"\n[Path Info — {label}]")
+            print(path)
+        else:
+            print(f"[Path Info — {label}] No valid path found.")
    
