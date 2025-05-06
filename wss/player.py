@@ -1,4 +1,4 @@
-# player resource managmnet and movement
+# player resource management and movement
 
 class Player:
     def __init__(self, max_strength, max_water, max_food, vision, brain, location):
@@ -23,12 +23,22 @@ class Player:
         # 1. Boundary + existence check
         target = game_map.get_square(new_x, new_y)
         if not target:
-            print("You can't move off the map!")
+            print("Move blocked: off the map.")
             return False
+
+        # ← ADD THESE LINES
+        t = target.terrain
+        print(
+            f"[DEBUG] Target terrain: {t.name} || costs: move={t.move_cost}, food={t.food_cost}, "
+            f"water={t.water_cost}")
+        print(
+            f"[DEBUG] Your resources: strength={self.current_strength}, food={self.current_food}, "
+            f"water={self.current_water}")
+        # ← END DEBUG BLOCK
 
         # 2. Resource check
         if not self.can_enter(target):
-            print("You don't have enough resources to enter that terrain.")
+            print("Move blocked: insufficient resources for", target.terrain.name)
             return False
 
         # 3. Deduct costs and update position
@@ -39,7 +49,7 @@ class Player:
     def can_enter(self, square):
         t = square.terrain
         return (
-            self.current_gold >= t.move_cost and
+            self.current_strength >= t.move_cost and
             self.current_food >= t.food_cost and
             self.current_water >= t.water_cost
         )

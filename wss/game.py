@@ -91,12 +91,13 @@ def main():
             player.rest()
             print("You rest for a turn (+2 strength, -0.5 food & water).")
         else:
-            dx, dy = DIRECTIONS[cmd]
-            moved = player.move((dx, dy), game_map)
-            if moved:
-                print(f"You moved {cmd}.")
-            else:
-                print("Move failed; try a different direction or rest.")
+            if cmd in DIRECTIONS:
+                dx, dy = DIRECTIONS[cmd]
+                moved = player.move((dx, dy), game_map)
+                if moved:
+                    print(f"You moved {cmd}.")
+                else:
+                    print("You can't move there!")
 
 
 if __name__ == '__main__':
