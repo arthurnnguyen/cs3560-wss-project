@@ -29,16 +29,16 @@ class Player:
         # ← ADD THESE LINES
         t = target.terrain
         print(
-            f"[DEBUG] Target terrain: {t.name} || costs: move={t.move_cost}, food={t.food_cost}, "
+            f"\nTarget terrain: {t.name} || costs: move={t.move_cost}, food={t.food_cost}, "
             f"water={t.water_cost}")
         print(
-            f"[DEBUG] Your resources: strength={self.current_strength}, food={self.current_food}, "
+            f"Your resources: strength={self.current_strength}, food={self.current_food}, "
             f"water={self.current_water}")
         # ← END DEBUG BLOCK
 
         # 2. Resource check
         if not self.can_enter(target):
-            print("Move blocked: insufficient resources for", target.terrain.name)
+            print("\nMove blocked: insufficient resources for", target.terrain.name)
             return False
 
         # 3. Deduct costs and update position

@@ -2,6 +2,7 @@
 
 from wss.item import Item
 
+
 class Trader(Item):
     def __init__(self):
         self.mood_state = "neutral"

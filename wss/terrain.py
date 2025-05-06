@@ -1,6 +1,7 @@
 # terrain types and movement/food/water costs
 import random
 
+
 class Terrain:
     def __init__(self, name, move_cost, food_cost, water_cost):
         self.name = name
@@ -10,7 +11,6 @@ class Terrain:
 
     def short_code(self):
         return self.name[0].upper()
-
 
 
 def generate_terrain_for_difficulty(difficulty):
