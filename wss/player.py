@@ -14,7 +14,7 @@ class Player:
 
         self.vision = vision
         self.brain = brain
-        self.location = location  
+        self.location = location
 
     def move(self, direction, game_map):
         x, y = self.location
@@ -35,6 +35,15 @@ class Player:
         # 3. Deduct costs and update position
         self.apply_terrain_costs(target)
         self.location = (new_x, new_y)
+
+        # 4. Check and collect items in the new square
+        if target.items:
+            for item in target.items[:]:
+                # If there is a trader, won't collect items but interact with trader
+                if not target.has_trader():
+                    self.collect(item)
+                    target.remove_item(item)
+
         return True
 
     def can_enter(self, square):

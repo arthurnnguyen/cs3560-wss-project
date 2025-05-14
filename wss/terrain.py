@@ -12,6 +12,14 @@ class Terrain:
     def short_code(self):
         return self.name[0].upper()
 
+    def movement_cost(self):
+        """Return cost to move past this square"""
+        return {
+            'movement': self.move_cost,
+            'food': self.food_cost / 2,  
+            'water': self.water_cost / 2  
+        }
+
 
 
 def generate_terrain_for_difficulty(difficulty):

@@ -3,6 +3,10 @@
 
 from .square import Square
 from .terrain import generate_terrain_for_difficulty
+import colorama
+from colorama import Fore, Back, Style
+
+colorama.init(autoreset=True)
 
 class Map:
     def __init__(self, width, height, difficulty):
@@ -22,11 +26,20 @@ class Map:
         if 0 <= x < self.width and 0 <= y < self.height:
             return self.grid[y][x]
         return None
-    
+
     def is_valid_position(self, pos):
         x, y = pos
         return 0 <= x < self.width and 0 <= y < self.height
 
-    def display(self):
-        for row in self.grid:
-            print(" ".join(square.terrain.short_code() for square in row))
+    def display(self, player_location=None):
+        
+        for y, row in enumerate(self.grid):
+            row_display = []
+            for x, square in enumerate(row):
+                terrain_code = square.terrain.short_code()
+                if player_location and (x, y) == player_location:
+                    row_display.append(f"{Back.YELLOW}{Fore.RED}{terrain_code}{Style.RESET_ALL}")
+                else:
+                    row_display.append(terrain_code)
+
+            print(" ".join(row_display))
