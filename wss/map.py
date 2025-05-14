@@ -32,6 +32,13 @@ class Map:
         for row in self.grid:
             print(" ".join(square.terrain.short_code() for square in row))
 
+    def is_valid_position(self, coords):
+        """
+        Return True if coords is inside the map bounds.
+        """
+        x, y = coords
+        return self.get_square(x, y) is not None
+
     def place_items(self):
         for y in range(self.height):
             for x in range(self.width):
@@ -42,17 +49,17 @@ class Map:
                     continue
 
                 # One‐time food cache (10% chance)
-                if random.random() < 0.10:
+                if random.random() < 0.50:
                     square.add_item(FoodBonus(amount=5, repeating=False))
 
                 # Repeating water source (like a stream) (20% chance)
-                if random.random() < 0.20:
+                if random.random() < 0.50:
                     square.add_item(WaterBonus(amount=3, repeating=True))
 
                 # One‐time gold nugget (5% chance)
-                if random.random() < 0.05:
+                if random.random() < 0.15:
                     square.add_item(GoldBonus(amount=2, repeating=False))
 
                 # Trader (3% chance)
-                if random.random() < 0.03:
+                if random.random() < 0.40:
                     square.add_item(Trader())

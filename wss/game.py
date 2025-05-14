@@ -4,127 +4,132 @@ from .map import Map
 from .player import Player
 from .trader import Trader
 from .item import FoodBonus, WaterBonus, GoldBonus
+from wss.brain import SurvivalBrain, RiskyBrain
+from wss.vision import FocusedVision, KeenEyed, FarSight, CautiousVision
 
-# Direction vectors: n, s, e, w
-DIRECTIONS = {
-    'n': (0, -1),
-    's': (0, 1),
-    'e': (1, 0),
-    'w': (-1, 0),
+# You can add more Brain subclasses to this dict as you implement them
+BRAIN_CHOICES = {
+    'survival': SurvivalBrain,
+    'risky': RiskyBrain
+}
+
+# Vision style options
+VISION_CHOICES = {
+    'cautious': CautiousVision,
+    'focused': FocusedVision,
+    'keen': KeenEyed,
+    'far': FarSight,
+}
+
+# Map Vision/Brain choice prompts to instances
+def choose_option(prompt, options):
+    keys = list(options.keys())
+    while True:
+        choice = input(f"{prompt} ({'/'.join(keys)}): ").strip().lower()
+        if choice in options:
+            return options[choice]()
+        print(f"Invalid choice. Please select one of: {', '.join(keys)}.")
+
+# Convert Path direction strings into (dx, dy) vectors
+DIRECTION_MAP = {
+    "MoveNorth": (0, -1),
+    "MoveSouth": (0, 1),
+    "MoveEast": (1, 0),
+    "MoveWest": (-1, 0),
+    "MoveNorthEast": (1, -1),
+    "MoveNorthWest": (-1, -1),
+    "MoveSouthEast": (1, 1),
+    "MoveSouthWest": (-1, 1),
 }
 
 
-def prompt_command():
-    while True:
-        cmd = input("\nEnter command (n/s/e/w = move, r = rest, q = quit): ").strip().lower()
-        if cmd in DIRECTIONS or cmd in ('r', 'q'):
-            return cmd
-        print("Invalid command. Try again.")
-
-
 def main():
-    print("=== Wilderness Survival System ===")
+    print("=== Wilderness Survival System Simulation ===")
 
-    # Validate width
+    # Map size and difficulty
     while True:
-        raw = input("Map width (number of squares): ").strip()
         try:
-            width = int(raw)
-            if width > 0:
+            width  = int(input("Map width (squares): ").strip())
+            height = int(input("Map height (squares): ").strip())
+            if width > 0 and height > 0:
                 break
-            else:
-                print("Width must be a positive integer.")
+            print("Width and height must be positive integers.")
         except ValueError:
-            print("Please enter a valid integer.")
-
-    # Validate height
+            print("Please enter valid integers.")
+    valid_diffs = ('easy','medium','hard')
     while True:
-        raw = input("Map height (number of squares): ").strip()
-        try:
-            height = int(raw)
-            if height > 0:
-                break
-            else:
-                print("Height must be a positive integer.")
-        except ValueError:
-            print("Please enter a valid integer.")
-
-    # Validate difficulty
-    valid_diffs = ("easy", "medium", "hard")
-    while True:
-        difficulty = input("Select difficulty (easy, medium, hard): ").strip().lower()
-        if difficulty in valid_diffs:
+        diff = input("Select difficulty (easy, medium, hard): ").strip().lower()
+        if diff in valid_diffs:
+            difficulty = diff
             break
-        print(f"Invalid choice. Please enter one of: {', '.join(valid_diffs)}.")
-    print(f"Got it — map {width}×{height} on '{difficulty}' difficulty.")
+        print(f"Invalid choice. Choose: {', '.join(valid_diffs)}.")
 
+    # AI configuration
+    vision = choose_option("Select vision style", VISION_CHOICES)
+    brain  = choose_option("Select brain strategy", BRAIN_CHOICES)
+
+    # Initialize map and player
     game_map = Map(width, height, difficulty)
     print("\nGenerated map:")
     game_map.display()
 
-    # Initialize player at west edge, middle row
     start_y = height // 2
     player = Player(
         max_strength=10,
         max_water=10,
         max_food=10,
-        vision=None,
-        brain=None,
+        vision=vision,
+        brain=brain,
         location=(0, start_y)
     )
 
-    # Main game loop
+    turn = 1
+    # Simulation loop
     while True:
         x, y = player.location
         square = game_map.get_square(x, y)
 
+        # Collect bonuses or trade
         for item in square.items[:]:
             if isinstance(item, Trader):
-                player.trade_with(item)  # trader logic never gets removed
+                player.trade_with(item, turn)
             else:
-                applied = item.apply_to(player)
+                applied = item.apply_to(player, turn)
                 if applied and not item.repeating:
                     square.remove_item(item)
 
-        # Display status
-        print(f"\nYou are at ({x}, {y}) on {square.terrain.name}.")
-        print(f"Stats -> Strength: {player.current_strength}, Food: {player.current_food}, "
-              f"Water: {player.current_water}, Gold: {player.current_gold}")
+        # Status
+        print(f"\nTurn {turn}: Location {player.location} on {square.terrain.name}")
+        print(f"Stats -> Strength: {player.current_strength}, Food: {player.current_food}, Water: {player.current_water}, Gold: {player.current_gold}")
 
-        # Collect or trade items in current square
-        if square.items:
-            for item in square.items[:]:
-                print(f"\nThere is a {type(item).__name__} here.")
-                if isinstance(item, Trader):
-                    player.trade_with(item)
-                else:
-                    player.collect(item)
-                    print(f"Collected {type(item).__name__}.")
-                    square.remove_item(item)
-
-        # Check for win / lose conditions
+        # Win/Lose
         if player.location[0] >= width - 1:
-            print("Congratulations! You've reached the east edge and survived!")
+            print("Player succeeded: reached east edge!")
             break
         if player.current_strength <= 0 or player.current_food <= 0 or player.current_water <= 0:
-            print("You've run out of resources and perished.\n")
-            print("GAME OVER.")
+            print("Player failed: resources depleted. Game over.")
             break
 
-        # Get player command
-        cmd = prompt_command()
-        if cmd == 'q':
-            print("Quitting game. Goodbye!")
-            break
-        elif cmd == 'r':
+        # AI decision
+        action = player.brain.make_move(player, game_map)
+        print(f"Player action: {action}")
+
+        # Execute
+        if action == 'rest':
             player.rest()
-            print("You rest for a turn (+2 strength, -0.5 food & water).")
         else:
-            if cmd in DIRECTIONS:
-                dx, dy = DIRECTIONS[cmd]
-                moved = player.move((dx, dy), game_map)
-                if moved:
-                    print(f"You moved {cmd}.")
+            vec = DIRECTION_MAP.get(action)
+            if vec:
+                moved = player.move(vec, game_map)
+                if not moved:
+                    print("Move blocked; Player rests instead.")
+                    player.rest()
+            else:
+                # Unrecognized command
+                player.rest()
+
+        turn += 1
+
 
 
 if __name__ == '__main__':

@@ -26,7 +26,6 @@ class Player:
             print("Move blocked: off the map.")
             return False
 
-        # ← ADD THESE LINES
         t = target.terrain
         print(
             f"\nTarget terrain: {t.name} || costs: move={t.move_cost}, food={t.food_cost}, "
@@ -68,5 +67,5 @@ class Player:
         self.current_food -= 0.5
         self.current_water -= 0.5
 
-    def trade_with(self, trader):
-        trader.initiate_trade(self)
+    def trade_with(self, trader, current_turn):
+        trader.initiate_trade(self, current_turn)
