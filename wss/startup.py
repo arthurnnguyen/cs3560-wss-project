@@ -11,7 +11,7 @@ def setup_game():
     max_strength=10,
     max_water=5,
     max_food=5,
-    vision=None,        # or whatever vision object your game expects
+    vision=None,        
     brain=brain,
     location=location
 )
