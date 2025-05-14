@@ -41,8 +41,10 @@ Each vision type provides methods to find paths:
 
 There are 2 types of brain strategies:
 	1.	**SurvivalBrain**: Prioritizes survival by finding food and water when needed.
+ 
 	2.	**ResourceBrain**: Focuses on collecting resources before moving east.
-  3.  **RiskyBrain**: 
+ 
+        3.      **RiskyBrain**: 
 
 ### Terrain
 
