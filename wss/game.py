@@ -82,7 +82,7 @@ def main():
     elif vision_choice == 4:
         vision = FarSight()
 
-    # Choose Brain (AI decision-making strategy)
+    # Choose Brain 
     print("\n=== Choose Brain Type ===")
     print("1. Survival Brain - Prioritizes food and water")
     print("2. Resource Brain - Prioritizes gold and traders")
