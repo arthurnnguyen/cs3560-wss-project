@@ -3,14 +3,14 @@
 from .map import Map
 from .player import Player
 from .trader import Trader
-from .item import FoodBonus, WaterBonus, GoldBonus
-from wss.brain import SurvivalBrain, RiskyBrain
+from wss.brain import SurvivalBrain, RiskyBrain, ResourceBrain
 from wss.vision import FocusedVision, KeenEyed, FarSight, CautiousVision
 
 # You can add more Brain subclasses to this dict as you implement them
 BRAIN_CHOICES = {
     'survival': SurvivalBrain,
-    'risky': RiskyBrain
+    'risky': RiskyBrain,
+    'resource': ResourceBrain,
 }
 
 # Vision style options
@@ -22,6 +22,8 @@ VISION_CHOICES = {
 }
 
 # Map Vision/Brain choice prompts to instances
+
+
 def choose_option(prompt, options):
     keys = list(options.keys())
     while True:
@@ -29,6 +31,7 @@ def choose_option(prompt, options):
         if choice in options:
             return options[choice]()
         print(f"Invalid choice. Please select one of: {', '.join(keys)}.")
+
 
 # Convert Path direction strings into (dx, dy) vectors
 DIRECTION_MAP = {
@@ -49,14 +52,14 @@ def main():
     # Map size and difficulty
     while True:
         try:
-            width  = int(input("Map width (squares): ").strip())
+            width = int(input("Map width (squares): ").strip())
             height = int(input("Map height (squares): ").strip())
             if width > 0 and height > 0:
                 break
             print("Width and height must be positive integers.")
         except ValueError:
             print("Please enter valid integers.")
-    valid_diffs = ('easy','medium','hard')
+    valid_diffs = ('easy', 'medium', 'hard')
     while True:
         diff = input("Select difficulty (easy, medium, hard): ").strip().lower()
         if diff in valid_diffs:
@@ -66,7 +69,7 @@ def main():
 
     # AI configuration
     vision = choose_option("Select vision style", VISION_CHOICES)
-    brain  = choose_option("Select brain strategy", BRAIN_CHOICES)
+    brain = choose_option("Select brain strategy", BRAIN_CHOICES)
 
     # Initialize map and player
     game_map = Map(width, height, difficulty)
@@ -75,9 +78,9 @@ def main():
 
     start_y = height // 2
     player = Player(
-        max_strength=50,
-        max_water=50,
-        max_food=50,
+        max_strength=10,
+        max_water=10,
+        max_food=10,
         vision=vision,
         brain=brain,
         location=(0, start_y)
@@ -100,15 +103,17 @@ def main():
 
         # Status
         print(f"\nTurn {turn}: Location {player.location} on {square.terrain.name}")
-        print(f"Stats -> Strength: {player.current_strength}, Food: {player.current_food}, Water: {player.current_water}, Gold: {player.current_gold}")
+        print(f"Stats -> Strength: {player.current_strength}, Food: {player.current_food}, "
+              f"Water: {player.current_water}, Gold: {player.current_gold}")
 
         # Win/Lose
         if player.location[0] >= width - 1:
-            print("Player succeeded: reached east edge!")
+            print("PLAYER WON: reached east edge!")
             break
 
         if player.current_strength <= 0 or player.current_food <= 0 or player.current_water <= 0:
-            print("Player failed: resources depleted. Game over.")
+            print("PLAYER FAILED: resources depleted.")
+            print("GAME OVER!")
             break
 
         # AI decision
@@ -130,7 +135,6 @@ def main():
                 player.rest()
 
         turn += 1
-
 
 
 if __name__ == '__main__':

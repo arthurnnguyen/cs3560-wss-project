@@ -4,7 +4,7 @@ import random
 from .item import WaterBonus, FoodBonus, GoldBonus
 from .square import Square
 from .terrain import generate_terrain_for_difficulty
-from .trader import Trader
+from .trader import Trader, GenerousTrader, StingyTrader
 
 
 class Map:
@@ -15,7 +15,6 @@ class Map:
 
         self.generate_map(difficulty)
         self.place_items()    # ← populate bonuses & traders here
-
 
     def generate_map(self, difficulty):
         for y in range(self.height):
@@ -48,18 +47,19 @@ class Map:
                 if x == 0:
                     continue
 
-                # One‐time food cache (10% chance)
+                # One‐time food cache (50% chance)
                 if random.random() < 0.50:
                     square.add_item(FoodBonus(amount=5, repeating=False))
 
-                # Repeating water source (like a stream) (20% chance)
+                # Repeating water source (like a stream) (50% chance)
                 if random.random() < 0.50:
                     square.add_item(WaterBonus(amount=3, repeating=True))
 
-                # One‐time gold nugget (5% chance)
+                # One‐time gold nugget (15% chance)
                 if random.random() < 0.15:
                     square.add_item(GoldBonus(amount=2, repeating=False))
 
-                # Trader (3% chance)
+                # Trader (40% chance)
                 if random.random() < 0.40:
-                    square.add_item(Trader())
+                    t = GenerousTrader() if random.random() < 0.5 else StingyTrader()
+                    square.add_item(t)

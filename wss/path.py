@@ -20,6 +20,4 @@ class Path:
     def __str__(self):
         return (
             f"Path from {self.start_position} to {self.end_position}\n"
-            f"Directions: {self.directions}\n"
-            f"Total Cost: {self.total_cost()}"
         )
