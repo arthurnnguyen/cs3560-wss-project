@@ -66,6 +66,7 @@ class Player:
         self.current_strength = min(self.max_strength, self.current_strength + 2)
         self.current_food -= 0.5
         self.current_water -= 0.5
+        print("Move blocked; Player rests instead.")
 
     def trade_with(self, trader, current_turn):
         trader.initiate_trade(self, current_turn)

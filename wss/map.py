@@ -4,7 +4,7 @@ import random
 from .item import WaterBonus, FoodBonus, GoldBonus
 from .square import Square
 from .terrain import generate_terrain_for_difficulty
-from .trader import Trader, GenerousTrader, StingyTrader
+from .trader import Trader, GenerousTrader, StingyTrader, FoodTrader, WaterTrader
 
 
 class Map:
@@ -61,5 +61,11 @@ class Map:
 
                 # Trader (40% chance)
                 if random.random() < 0.40:
-                    t = GenerousTrader() if random.random() < 0.5 else StingyTrader()
-                    square.add_item(t)
+                    # pick one of the four trader classes
+                    TraderClass = random.choice([
+                        GenerousTrader,
+                        StingyTrader,
+                        FoodTrader,
+                        WaterTrader
+                    ])
+                    square.add_item(TraderClass())

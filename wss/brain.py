@@ -92,6 +92,17 @@ class SurvivalBrain(Brain):
         else:
             print(f"[Path Info — {label}] No valid path found.")
 
+    def decide_trade(self, trader, player, game_map):
+        offer, request = trader.default_offer()
+        print(f"[SurvivalBrain] Evaluate trade: give {offer} → get {request}")
+        # weight values: gold=3, food=1, water=1
+        weights = {'gold': 3, 'food': 1, 'water': 1}
+        net = sum(request.get(r,0)*weights[r] for r in weights) - sum(offer.get(r,0)*weights[r] for r in weights)
+        if net >= 0:
+            print(f"[SurvivalBrain] Net value {net} ≥ 0: accepting trade.")
+            return offer, request
+        print(f"[SurvivalBrain] Net value {net} < 0: walking away.")
+        return None, None
 
 class RiskyBrain(Brain):
     # brain risks everything to move east indefinitely
@@ -125,6 +136,17 @@ class RiskyBrain(Brain):
             print(path)
         else:
             print(f"[Path Info — {label}] No valid path found.")
+
+    def decide_trade(self, trader, player, game_map):
+        offer, request = trader.default_offer()
+        print(f"[RiskyBrain] Evaluate trade: give {offer} → get {request}")
+        # Accept any offer that grants any resource
+        if any(amount > 0 for amount in request.values()):
+            print(f"[RiskyBrain] Gains {request}, accepting.")
+            return offer, request
+        print("[RiskyBrain] No gain, rejecting.")
+        return None, None
+
 
 
 class ResourceBrain(Brain):
@@ -190,3 +212,25 @@ class ResourceBrain(Brain):
             print(path)
         else:
             print(f"[Path Info — {label}] No valid path found.")
+
+    def decide_trade(self, trader, player, game_map):
+        offer, request = trader.default_offer()
+        print(f"[ResourceBrain] Evaluate trade: give {offer} → get {request}")
+        # Urgent needs
+        if player.current_water <= 3 and request.get('water',0) > 0:
+            print("[ResourceBrain] Urgent need water: accepting.")
+            return offer, request
+        if player.current_food <= 3 and request.get('food',0) > 0:
+            print("[ResourceBrain] Urgent need food: accepting.")
+            return offer, request
+        # Otherwise evaluate net value
+        weights = {'gold': 3, 'food': 1, 'water': 1}
+        net = sum(request.get(r,0)*weights[r] for r in weights) - sum(offer.get(r,0)*weights[r] for r in weights)
+        if net >= 0:
+            print(f"[ResourceBrain] Net value {net} ≥ 0: accepting trade.")
+            return offer, request
+        print(f"[ResourceBrain] Net value {net} < 0: walking away.")
+        return None, None
+
+
+

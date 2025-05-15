@@ -128,7 +128,6 @@ def main():
             if vec:
                 moved = player.move(vec, game_map)
                 if not moved:
-                    print("Move blocked; Player rests instead.")
                     player.rest()
             else:
                 # Unrecognized command
