@@ -207,12 +207,12 @@ class Vision:
         direction_map = {
             (1, 0): "MoveEast",
             (-1, 0): "MoveWest",
-            (0, 1): "MoveNorth",
-            (0, -1): "MoveSouth",
-            (1, 1): "MoveNorthEast",
-            (-1, 1): "MoveNorthWest",
-            (1, -1): "MoveSouthEast",
-            (-1, -1): "MoveSouthWest",
+            (0, -1): "MoveNorth",
+            (0, 1): "MoveSouth",
+            (1, -1): "MoveNorthEast",
+            (-1, -1): "MoveNorthWest",
+            (1, 1): "MoveSouthEast",
+            (-1, 1): "MoveSouthWest",
         }
         return direction_map.get((dx, dy), None)
 
@@ -224,8 +224,8 @@ class CautiousVision(Vision):
         """Returns coordinates of squares visible to CautiousVision"""
         x, y = player.location
         visible = [
-            (x, y + 1),  # North
-            (x, y - 1),  # South
+            (x, y - 1),  # North
+            (x, y + 1),  # South
             (x + 1, y),  # East
         ]
         # Filter out squares that are outside map boundaries
@@ -239,8 +239,8 @@ class FocusedVision(Vision):
         """Returns coordinates of squares visible to FocusedVision"""
         x, y = player.location
         visible = [
-            (x + 1, y + 1),  # NorthEast
-            (x + 1, y - 1),  # SouthEast
+            (x + 1, y - 1),  # NorthEast
+            (x + 1, y + 1),  # SouthEast
             (x + 1, y),  # East
         ]
         # Filter out squares that are outside map boundaries
@@ -254,10 +254,10 @@ class KeenEyed(Vision):
         """Returns coordinates of squares visible to FocusedVision"""
         x, y = player.location
         visible = [
-            (x, y + 1),  # North
-            (x, y - 1),  # South
-            (x + 1, y + 1),  # NorthEast
-            (x + 1, y - 1),  # SouthEast
+            (x, y - 1),  # North
+            (x, y + 1),  # South
+            (x + 1, y - 1),  # NorthEast
+            (x + 1, y + 1),  # SouthEast
             (x + 1, y),  # East
             (x + 2, y),  # Second East square
         ]
@@ -272,18 +272,18 @@ class FarSight(Vision):
         """Returns coordinates of squares visible to FocusedVision"""
         x, y = player.location
         visible = [
-            (x, y + 1),  # North
-            (x, y + 2),  # Second North square
-            (x, y - 1),  # South
-            (x, y - 2),  # Second South square
-            (x + 1, y + 1),  # NorthEast
-            (x + 1, y + 2),  # NorthEast and North one square
-            (x + 1, y - 1),  # SouthEast
-            (x + 1, y - 2),  # SouthEast and South one square
+            (x, y - 1),  # North
+            (x, y - 2),  # Second North square
+            (x, y + 1),  # South
+            (x, y + 2),  # Second South square
+            (x + 1, y - 1),  # NorthEast
+            (x + 1, y - 2),  # NorthEast and North one square
+            (x + 1, y + 1),  # SouthEast
+            (x + 1, y + 2),  # SouthEast and South one square
             (x + 1, y),  # East
-            (x + 2, y - 1),  # SouthEast and East one square
-            (x + 2, y + 1),  # NorthEast and East one square
-            (x + 2, y - 1)  # Second East square
+            (x + 2, y + 1),  # SouthEast and East one square
+            (x + 2, y - 1),  # NorthEast and East one square
+            (x + 2, y)  # Second East square
         ]
         # Filter out squares that are outside map boundaries
         return [coords for coords in visible if game_map.is_valid_position(coords)]

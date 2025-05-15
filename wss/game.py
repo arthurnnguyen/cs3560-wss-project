@@ -75,9 +75,9 @@ def main():
 
     start_y = height // 2
     player = Player(
-        max_strength=10,
-        max_water=10,
-        max_food=10,
+        max_strength=50,
+        max_water=50,
+        max_food=50,
         vision=vision,
         brain=brain,
         location=(0, start_y)
@@ -106,6 +106,7 @@ def main():
         if player.location[0] >= width - 1:
             print("Player succeeded: reached east edge!")
             break
+
         if player.current_strength <= 0 or player.current_food <= 0 or player.current_water <= 0:
             print("Player failed: resources depleted. Game over.")
             break
