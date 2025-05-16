@@ -1,5 +1,16 @@
 # vision.py
-# Player sight and scanning surrounding squares
+# --------------------------------------------------------------------------
+# This file defines how the player perceives the game map.
+# It includes a base Vision class and four specialized subclasses:
+# - CautiousVision
+# - FocusedVision
+# - KeenEyed
+# - FarSight
+#
+# Each subclass defines how far and in what directions a player can see.
+# Vision is used by the brain to make movement and survival decisions.
+# It also includes utility methods to help locate food, water, gold,
+# traders, or the easiest path based on what is visible.
 
 from wss.path import Path
 
