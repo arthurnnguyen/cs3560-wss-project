@@ -4,7 +4,7 @@ import random
 from .item import WaterBonus, FoodBonus, GoldBonus
 from .square import Square
 from .terrain import generate_terrain_for_difficulty
-from .trader import Trader
+from .trader import Trader, GenerousTrader, StingyTrader, FoodTrader, WaterTrader
 
 
 class Map:
@@ -15,7 +15,6 @@ class Map:
 
         self.generate_map(difficulty)
         self.place_items()    # ← populate bonuses & traders here
-
 
     def generate_map(self, difficulty):
         for y in range(self.height):
@@ -32,6 +31,13 @@ class Map:
         for row in self.grid:
             print(" ".join(square.terrain.short_code() for square in row))
 
+    def is_valid_position(self, coords):
+        """
+        Return True if coords is inside the map bounds.
+        """
+        x, y = coords
+        return self.get_square(x, y) is not None
+
     def place_items(self):
         for y in range(self.height):
             for x in range(self.width):
@@ -41,18 +47,25 @@ class Map:
                 if x == 0:
                     continue
 
-                # One‐time food cache (10% chance)
-                if random.random() < 0.10:
+                # One‐time food cache (50% chance)
+                if random.random() < 0.50:
                     square.add_item(FoodBonus(amount=5, repeating=False))
 
-                # Repeating water source (like a stream) (20% chance)
-                if random.random() < 0.20:
+                # Repeating water source (like a stream) (50% chance)
+                if random.random() < 0.50:
                     square.add_item(WaterBonus(amount=3, repeating=True))
 
-                # One‐time gold nugget (5% chance)
-                if random.random() < 0.05:
+                # One‐time gold nugget (15% chance)
+                if random.random() < 0.15:
                     square.add_item(GoldBonus(amount=2, repeating=False))
 
-                # Trader (3% chance)
-                if random.random() < 0.03:
-                    square.add_item(Trader())
+                # Trader (40% chance)
+                if random.random() < 0.40:
+                    # pick one of the four trader classes
+                    TraderClass = random.choice([
+                        GenerousTrader,
+                        StingyTrader,
+                        FoodTrader,
+                        WaterTrader
+                    ])
+                    square.add_item(TraderClass())

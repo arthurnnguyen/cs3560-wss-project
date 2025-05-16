@@ -26,7 +26,7 @@ class Item:
 
 
     def _apply(self, player):
-        """Subclasses override this to do the actual effect and return True."""
+        # Subclasses override this to do the actual effect and return True.
         raise NotImplementedError
 
 
@@ -38,7 +38,7 @@ class FoodBonus(Item):
     def __str__(self):
         return f"FoodBonus(+{self.amount} food)"
 
-    def apply_to(self, player):     # increases amount without going over max
+    def apply_to(self, player, current_turn):     # increases amount without going over max
         before = player.current_food
         player.current_food = min(player.max_food, player.current_food + self.amount)
         return player.current_food > before
@@ -52,7 +52,7 @@ class WaterBonus(Item):
     def __str__(self):
         return f"WaterBonus(+{self.amount} water)"
 
-    def apply_to(self, player):  # increases amount without going over max
+    def apply_to(self, player, current_turn):  # increases amount without going over max
         before = player.current_food
         player.current_food = min(player.max_food, player.current_food + self.amount)
         return player.current_food > before
@@ -65,6 +65,6 @@ class GoldBonus(Item):
     def __str__(self):
         return f"GoldBonus(+{self.amount} gold)"
 
-    def apply_to(self, player):
+    def apply_to(self, player, current_turn):
         player.current_gold += self.amount
         return True
